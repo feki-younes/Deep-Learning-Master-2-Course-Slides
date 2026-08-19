@@ -1,299 +1,570 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
   <link rel="icon" type="image/x-icon" href="icon.png">
-  <title>Deep Learning M2 — Syllabus</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deep Learning M2 — Course Syllabus</title>
   <style>
-    body { background: #0d0d1a; color: #e2e8f0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+    /* ── Reset & base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    header {
-      background: linear-gradient(135deg, #0d0d1a 0%, #1a0a2e 100%);
-      border-bottom: 1px solid rgba(0,212,255,0.2);
-      padding: 2rem 3rem 1.5rem;
-      display: flex; align-items: center; justify-content: space-between;
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --border:    #30363d;
+      --accent:    #7c3aed;
+      --accent2:   #06b6d4;
+      --text:      #e6edf3;
+      --muted:     #8b949e;
+      --green:     #3fb950;
+      --yellow:    #d29922;
+      --red:       #f85149;
     }
 
-    header h1 {
-      background: linear-gradient(90deg, #00d4ff, #a855f7);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text; font-size: 1.8rem; margin: 0;
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
     }
 
-    header a {
-      color: #00d4ff; text-decoration: none; font-size: 0.9rem;
-      border: 1px solid rgba(0,212,255,0.4); padding: 0.4em 1em;
-      border-radius: 20px; transition: all 0.2s;
+    /* ── Animated background ──────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 10%, rgba(124,58,237,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(6,182,212,0.06) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
     }
-    header a:hover { background: rgba(0,212,255,0.1); }
 
-    main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-
-    .intro-box {
-      background: rgba(0,212,255,0.05);
-      border: 1px solid rgba(0,212,255,0.2);
-      border-radius: 12px; padding: 1.2rem 1.8rem; margin-bottom: 2.5rem;
+    /* ── Layout wrapper ───────────────────────────────────────── */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
     }
-    .intro-box p { margin: 0.3em 0; color: rgba(255,255,255,0.75); font-size: 0.95rem; }
-    .intro-box strong { color: #00d4ff; }
 
-    .chapter {
-      margin-bottom: 2rem;
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 14px; overflow: hidden;
+    /* ── Header ───────────────────────────────────────────────── */
+    .site-header {
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+    }
+
+    .site-header .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+
+    .site-header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .site-header .subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .site-header .meta {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 1.2rem;
+    }
+
+    .site-header .meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .site-header .meta span strong {
+      color: var(--text);
+    }
+
+    /* ── Stats bar ────────────────────────────────────────────── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      text-align: center;
       transition: border-color 0.2s;
     }
-    .chapter:hover { border-color: rgba(0,212,255,0.35); }
 
-    .chapter-header {
-      background: rgba(255,255,255,0.03);
-      padding: 1rem 1.5rem;
-      display: flex; align-items: center; gap: 1rem;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+    .stat-card:hover { border-color: var(--accent); }
+
+    .stat-card .value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .chapter-num {
-      background: linear-gradient(135deg, #00d4ff, #a855f7);
-      color: #0d0d1a; font-weight: 800; font-size: 0.8rem;
-      width: 2rem; height: 2rem; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
+    .stat-card .label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.2rem;
+    }
+
+    /* ── Section title ────────────────────────────────────────── */
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      padding-left: 0.2rem;
+    }
+
+    /* ── Chapter card ─────────────────────────────────────────── */
+    .chapter-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .chapter-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .chapter-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* Chapter header (clickable toggle) */
+    .chapter-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.4rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .chapter-number {
+      flex-shrink: 0;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .chapter-info { flex: 1; min-width: 0; }
+
+    .chapter-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chapter-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+
+    .chapter-toggle {
+      flex-shrink: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      transition: transform 0.25s;
+    }
+
+    .chapter-card.open .chapter-toggle { transform: rotate(180deg); }
+
+    /* Slides list (collapsible) */
+    .slides-list {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 0.6rem 1rem 0.8rem 1rem;
+    }
+
+    .chapter-card.open .slides-list { display: block; }
+
+    .slide-link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.5rem 0.6rem;
+      border-radius: 7px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.88rem;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .slide-link:hover {
+      background: rgba(124,58,237,0.12);
+      color: var(--accent2);
+    }
+
+    .slide-link .slide-icon {
+      font-size: 1rem;
       flex-shrink: 0;
     }
 
-    .chapter-title { font-size: 1.05rem; font-weight: 700; color: #fff; }
-    .chapter-desc  { font-size: 0.82rem; color: rgba(255,255,255,0.5); margin-top: 0.15rem; }
+    .slide-link .slide-label { flex: 1; }
 
-    .section-list { padding: 0.6rem 1.5rem 1rem; }
-
-    .section-item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0.55rem 0.8rem; border-radius: 8px;
-      transition: background 0.15s; text-decoration: none;
-      color: rgba(255,255,255,0.8); font-size: 0.9rem;
-      margin-bottom: 0.3rem;
-    }
-    .section-item:hover { background: rgba(0,212,255,0.08); color: #00d4ff; }
-
-    .section-item .icon { margin-right: 0.6rem; font-size: 1rem; }
-
-    .section-item .badge {
-      font-size: 0.65rem; padding: 2px 8px; border-radius: 10px;
-      background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.4);
-      color: #a855f7; white-space: nowrap;
+    .slide-link .slide-tag {
+      font-size: 0.68rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      white-space: nowrap;
     }
 
-    .badge.theory  { background: rgba(0,212,255,0.1); border-color: rgba(0,212,255,0.4); color: #00d4ff; }
-    .badge.code    { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.4); color: #22c55e; }
-    .badge.history { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.4); color: #fbbf24; }
+    /* ── Learning outcomes ────────────────────────────────────── */
+    .outcomes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
 
-    footer {
-      text-align: center; padding: 2rem;
-      color: rgba(255,255,255,0.3); font-size: 0.8rem;
-      border-top: 1px solid rgba(255,255,255,0.06);
+    .outcome-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.1rem 1.3rem;
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+    }
+
+    .outcome-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+    .outcome-text strong {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    .outcome-text span {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ── Tools bar ────────────────────────────────────────────── */
+    .tools-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 3rem;
+    }
+
+    .tool-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.82rem;
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+
+    .tool-badge:hover { border-color: var(--accent2); }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    .site-footer {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .page-wrapper { padding: 1rem 1rem 3rem; }
+      .site-header { padding: 2rem 0.5rem 1.5rem; }
+      .chapter-title { font-size: 0.9rem; }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <div>
-    <h1>🧠 Deep Learning — M2</h1>
-    <p style="color:rgba(255,255,255,0.4); font-size:0.85rem; margin:0.3rem 0 0;">
-      From Perceptron to Large Language Models
-    </p>
+<div class="page-wrapper">
+
+  <!-- ── Header ──────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="badge">Master 2 · Deep Learning</div>
+    <h1>🧠 Deep Learning — Full Course</h1>
+    <p class="subtitle">From the Perceptron to Large Language Models</p>
+    <div class="meta">
+      <span>📅 Academic year: <strong id="academic-year">—</strong></span>
+      <span>🎓 Level: <strong>M2 — Advanced</strong></span>
+      <span>🛠 Framework: <strong>PyTorch</strong></span>
+      <span>🌐 Language: <strong>English</strong></span>
+    </div>
+  </header>
+
+  <!-- ── Stats ───────────────────────────────────────────────── -->
+  <div class="stats-bar">
+    <div class="stat-card"><div class="value">9</div><div class="label">Chapters</div></div>
+    <div class="stat-card"><div class="value">14</div><div class="label">Slide decks</div></div>
+    <div class="stat-card"><div class="value">~60h</div><div class="label">Content</div></div>
+    <div class="stat-card"><div class="value">M2</div><div class="label">Level</div></div>
   </div>
-  <a href="index.html">⬅ Back to Login</a>
-</header>
 
-<main>
+  <!-- ── Chapters ────────────────────────────────────────────── -->
+  <p class="section-title">📚 Course Chapters</p>
+  <div class="chapter-grid" id="chapters"></div>
 
-  <div class="intro-box">
-    <p>🎯 <strong>Objective:</strong> Master the theory and practice of Deep Learning — from mathematical foundations to state-of-the-art architectures.</p>
-    <p>🛠 <strong>Framework:</strong> All practical sessions use <strong>PyTorch</strong>.</p>
-    <p>📐 <strong>Prerequisites:</strong> Linear algebra, probability, Python programming, basic ML.</p>
-    <p>🔗 Click any section below to open it as a presentation.</p>
-  </div>
-
-  <!-- Chapter 0 -->
-  <div class="chapter">
-    <div class="chapter-header">
-      <div class="chapter-num">0</div>
-      <div>
-        <div class="chapter-title">Introduction</div>
-        <div class="chapter-desc">Course overview, objectives, tools and setup</div>
+  <!-- ── Learning outcomes ───────────────────────────────────── -->
+  <p class="section-title">🎯 Learning Outcomes</p>
+  <div class="outcomes-grid">
+    <div class="outcome-card">
+      <div class="outcome-icon">🔢</div>
+      <div class="outcome-text">
+        <strong>Master the mathematics</strong>
+        <span>Chain rule, backpropagation, gradient descent variants, loss landscapes.</span>
       </div>
     </div>
-    <div class="section-list">
-      <a class="section-item" href="presentation.html?src=00_introduction/intro.md">
-        <span><span class="icon">📌</span>Course Introduction & Roadmap</span>
-        <span class="badge theory">Theory</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- Chapter 1 -->
-  <div class="chapter">
-    <div class="chapter-header">
-      <div class="chapter-num">1</div>
-      <div>
-        <div class="chapter-title">History of Deep Learning</div>
-        <div class="chapter-desc">From McCulloch-Pitts to the modern era — why it took 70 years</div>
+    <div class="outcome-card">
+      <div class="outcome-icon">🏗</div>
+      <div class="outcome-text">
+        <strong>Understand every architecture</strong>
+        <span>Why ResNet solved vanishing gradients, why Transformers replaced RNNs, how GANs are trained.</span>
       </div>
     </div>
-    <div class="section-list">
-      <a class="section-item" href="presentation.html?src=01_history/history.md">
-        <span><span class="icon">📜</span>A Brief History of Neural Networks</span>
-        <span class="badge history">History</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- Chapter 2 -->
-  <div class="chapter">
-    <div class="chapter-header">
-      <div class="chapter-num">2</div>
-      <div>
-        <div class="chapter-title">Perceptron, MLP & Training Theory</div>
-        <div class="chapter-desc">Foundations: neurons, layers, backprop, optimisation, regularisation</div>
+    <div class="outcome-card">
+      <div class="outcome-icon">⚙️</div>
+      <div class="outcome-text">
+        <strong>Implement from scratch in PyTorch</strong>
+        <span>Every concept is accompanied by clean, commented PyTorch code.</span>
       </div>
     </div>
-    <div class="section-list">
-      <a class="section-item" href="presentation.html?src=02_perceptron_mlp/perceptron.md">
-        <span><span class="icon">⚡</span>The Perceptron & Activation Functions</span>
-        <span class="badge theory">Theory</span>
-      </a>
-      <a class="section-item" href="presentation.html?src=02_perceptron_mlp/mlp_fc.md">
-        <span><span class="icon">🔗</span>MLP, Backpropagation & Gradient Descent</span>
-        <span class="badge theory">Theory</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- Chapter 3 -->
-  <div class="chapter">
-    <div class="chapter-header">
-      <div class="chapter-num">3</div>
-      <div>
-        <div class="chapter-title">Convolutional Neural Networks</div>
-        <div class="chapter-desc">LeNet → AlexNet → VGG → ResNet → ResNeXt · Detection · Segmentation</div>
+    <div class="outcome-card">
+      <div class="outcome-icon">🧪</div>
+      <div class="outcome-text">
+        <strong>Debug & regularise</strong>
+        <span>Dropout, BatchNorm, LayerNorm, weight initialisation, learning rate schedules.</span>
       </div>
     </div>
-    <div class="section-list">
-      <a class="section-item" href="presentation.html?src=03_cnn/cnn.md">
-        <span><span class="icon">🖼</span>CNN Architecture Deep Dive</span>
-        <span class="badge theory">Theory</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- Chapter 4 -->
-  <div class="chapter">
-    <div class="chapter-header">
-      <div class="chapter-num">4</div>
-      <div>
-        <div class="chapter-title">Recurrent Networks — RNN, GRU, LSTM</div>
-        <div class="chapter-desc">Sequential modelling, vanishing gradients, gating mechanisms</div>
+    <div class="outcome-card">
+      <div class="outcome-icon">🤖</div>
+      <div class="outcome-text">
+        <strong>Fine-tune LLMs</strong>
+        <span>LoRA, QLoRA, RLHF, DPO — adapt foundation models to downstream tasks.</span>
       </div>
     </div>
-    <div class="section-list">
-      <a class="section-item" href="presentation.html?src=04_rnn_gru_lstm/rnn.md">
-        <span><span class="icon">🔄</span>Recurrent Neural Networks & BPTT</span>
-        <span class="badge theory">Theory</span>
-      </a>
-      <a class="section-item" href="presentation.html?src=04_rnn_gru_lstm/gru.md">
-        <span><span class="icon">🚪</span>Gated Recurrent Units (GRU)</span>
-        <span class="badge theory">Theory</span>
-      </a>
-      <a class="section-item" href="presentation.html?src=04_rnn_gru_lstm/lstm.md">
-        <span><span class="icon">🧱</span>Long Short-Term Memory (LSTM)</span>
-        <span class="badge theory">Theory</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- Chapter 5 -->
-  <div class="chapter">
-    <div class="chapter-header">
-      <div class="chapter-num">5</div>
-      <div>
-        <div class="chapter-title">Attention & Transformers</div>
-        <div class="chapter-desc">Self-attention, multi-head, positional encoding, BERT, ViT</div>
+    <div class="outcome-card">
+      <div class="outcome-icon">📖</div>
+      <div class="outcome-text">
+        <strong>Read research papers</strong>
+        <span>Understand the original papers: AlexNet, ResNet, Attention is All You Need, GPT, BERT…</span>
       </div>
     </div>
-    <div class="section-list">
-      <a class="section-item" href="presentation.html?src=05_transformers/attention.md">
-        <span><span class="icon">👁</span>Attention Mechanisms & Self-Attention</span>
-        <span class="badge theory">Theory</span>
-      </a>
-      <a class="section-item" href="presentation.html?src=05_transformers/transformers.md">
-        <span><span class="icon">🤖</span>The Transformer Architecture</span>
-        <span class="badge theory">Theory</span>
-      </a>
-    </div>
   </div>
 
-  <!-- Chapter 6 -->
-  <div class="chapter">
-    <div class="chapter-header">
-      <div class="chapter-num">6</div>
-      <div>
-        <div class="chapter-title">Reinforcement Learning</div>
-        <div class="chapter-desc">MDPs, Q-learning, policy gradients, PPO, RLHF</div>
+  <!-- ── Tools ───────────────────────────────────────────────── -->
+  <p class="section-title">🛠 Tools & Libraries</p>
+  <div class="tools-bar">
+    <div class="tool-badge">🔥 PyTorch</div>
+    <div class="tool-badge">⚡ Lightning</div>
+    <div class="tool-badge">🤗 Hugging Face</div>
+    <div class="tool-badge">📊 Weights & Biases</div>
+    <div class="tool-badge">🔢 NumPy</div>
+    <div class="tool-badge">📈 Matplotlib</div>
+    <div class="tool-badge">🐍 Python 3.11+</div>
+    <div class="tool-badge">☁️ Google Colab</div>
+    <div class="tool-badge">🖥 CUDA</div>
+  </div>
+
+  <!-- ── Footer ──────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <p>Deep Learning Course · Master 2 · <span id="footer-year"></span></p>
+    <p style="margin-top:0.4rem;">Built with Reveal.js &amp; GitHub Pages</p>
+  </footer>
+
+</div>
+
+<script>
+  // ── Academic year logic ──────────────────────────────────────
+  function getAcademicYear() {
+    const now   = new Date();
+    const year  = now.getFullYear();
+    const month = now.getMonth() + 1; // 1-based
+    return month >= 9
+      ? `${year} – ${year + 1}`
+      : `${year - 1} – ${year}`;
+  }
+
+  const ay = getAcademicYear();
+  document.getElementById('academic-year').textContent = ay;
+  document.getElementById('footer-year').textContent   = ay;
+
+  // ── Chapter data ─────────────────────────────────────────────
+  const chapters = [
+    {
+      num: '00', title: 'Introduction', emoji: '🚀',
+      desc: 'What is Deep Learning? Course overview & PyTorch setup.',
+      slides: [
+        { label: 'Course Introduction & Setup', file: '00_introduction/intro.md', tag: 'Intro' }
+      ]
+    },
+    {
+      num: '01', title: 'History of Deep Learning', emoji: '📜',
+      desc: 'From McCulloch-Pitts (1943) to the modern era.',
+      slides: [
+        { label: 'History of Deep Learning', file: '01_history/history.md', tag: 'History' }
+      ]
+    },
+    {
+      num: '02', title: 'Perceptron & MLP', emoji: '🔵',
+      desc: 'Biological neuron, activation functions, backpropagation, optimisers.',
+      slides: [
+        { label: 'The Perceptron', file: '02_perceptron_mlp/perceptron.md', tag: 'Theory' },
+        { label: 'MLP & Fully Connected Networks', file: '02_perceptron_mlp/mlp_fc.md', tag: 'Theory + Code' }
+      ]
+    },
+    {
+      num: '03', title: 'Convolutional Neural Networks', emoji: '🖼',
+      desc: 'LeNet → AlexNet → VGG → ResNet → ResNeXt. Detection & Segmentation.',
+      slides: [
+        { label: 'CNNs — From LeNet to ResNeXt', file: '03_cnn/cnn.md', tag: 'Theory + Code' }
+      ]
+    },
+    {
+      num: '04', title: 'RNN, GRU & LSTM', emoji: '🔄',
+      desc: 'Sequential modelling, vanishing gradients, gating mechanisms.',
+      slides: [
+        { label: 'Recurrent Neural Networks', file: '04_rnn_gru_lstm/rnn.md', tag: 'Theory' },
+        { label: 'Gated Recurrent Units (GRU)', file: '04_rnn_gru_lstm/gru.md', tag: 'Theory + Code' },
+        { label: 'Long Short-Term Memory (LSTM)', file: '04_rnn_gru_lstm/lstm.md', tag: 'Theory + Code' }
+      ]
+    },
+    {
+      num: '05', title: 'Transformers & Self-Attention', emoji: '⚡',
+      desc: '"Attention is All You Need" — the architecture that changed everything.',
+      slides: [
+        { label: 'Self-Attention Mechanism', file: '05_transformers/attention.md', tag: 'Theory' },
+        { label: 'The Transformer Architecture', file: '05_transformers/transformers.md', tag: 'Theory + Code' }
+      ]
+    },
+    {
+      num: '06', title: 'Reinforcement Learning', emoji: '🎮',
+      desc: 'MDP, Q-Learning, Policy Gradient, PPO, Actor-Critic.',
+      slides: [
+        { label: 'Deep Reinforcement Learning', file: '06_rl/rl.md', tag: 'Theory + Code' }
+      ]
+    },
+    {
+      num: '07', title: 'Generative Adversarial Networks', emoji: '🎨',
+      desc: 'GAN training dynamics, mode collapse, DCGAN, StyleGAN, Diffusion.',
+      slides: [
+        { label: 'GANs & Generative Models', file: '07_gan/gan.md', tag: 'Theory + Code' }
+      ]
+    },
+    {
+      num: '08', title: 'LLMs & Fine-Tuning', emoji: '🤖',
+      desc: 'GPT, BERT, scaling laws, RLHF, LoRA, QLoRA, RAG.',
+      slides: [
+        { label: 'Large Language Models', file: '08_llm/llm.md', tag: 'Theory' },
+        { label: 'Fine-Tuning LLMs', file: '08_llm/finetuning.md', tag: 'Theory + Code' }
+      ]
+    }
+  ];
+
+  // ── Render chapters ──────────────────────────────────────────
+  const container = document.getElementById('chapters');
+
+  chapters.forEach((ch, idx) => {
+    const card = document.createElement('div');
+    card.className = 'chapter-card';
+    // Open first chapter by default
+    if (idx === 0) card.classList.add('open');
+
+    const slidesHTML = ch.slides.map(s => `
+      <a class="slide-link" href="presentation.html?src=${s.file}" target="_blank">
+        <span class="slide-icon">▶</span>
+        <span class="slide-label">${s.label}</span>
+        <span class="slide-tag">${s.tag}</span>
+      </a>
+    `).join('');
+
+    card.innerHTML = `
+      <div class="chapter-header">
+        <div class="chapter-number">${ch.num}</div>
+        <div class="chapter-info">
+          <div class="chapter-title">${ch.emoji} ${ch.title}</div>
+          <div class="chapter-desc">${ch.desc}</div>
+        </div>
+        <div class="chapter-toggle">▼</div>
       </div>
-    </div>
-    <div class="section-list">
-      <a class="section-item" href="presentation.html?src=06_rl/rl.md">
-        <span><span class="icon">🎮</span>Deep Reinforcement Learning</span>
-        <span class="badge theory">Theory</span>
-      </a>
-    </div>
-  </div>
+      <div class="slides-list">${slidesHTML}</div>
+    `;
 
-  <!-- Chapter 7 -->
-  <div class="chapter">
-    <div class="chapter-header">
-      <div class="chapter-num">7</div>
-      <div>
-        <div class="chapter-title">Generative Models — VAE, GAN, Diffusion</div>
-        <div class="chapter-desc">Latent spaces, adversarial training, score matching</div>
-      </div>
-    </div>
-    <div class="section-list">
-      <a class="section-item" href="presentation.html?src=07_gan/gan.md">
-        <span><span class="icon">🎨</span>GANs, VAEs & Diffusion Models</span>
-        <span class="badge theory">Theory</span>
-      </a>
-    </div>
-  </div>
+    // Toggle on header click
+    card.querySelector('.chapter-header').addEventListener('click', () => {
+      card.classList.toggle('open');
+    });
 
-  <!-- Chapter 8 -->
-  <div class="chapter">
-    <div class="chapter-header">
-      <div class="chapter-num">8</div>
-      <div>
-        <div class="chapter-title">Large Language Models & Fine-Tuning</div>
-        <div class="chapter-desc">GPT family, BERT, embeddings, RLHF, LoRA, instruction tuning</div>
-      </div>
-    </div>
-    <div class="section-list">
-      <a class="section-item" href="presentation.html?src=08_llm/llm.md">
-        <span><span class="icon">💬</span>Large Language Models — Architecture & Scale</span>
-        <span class="badge theory">Theory</span>
-      </a>
-      <a class="section-item" href="presentation.html?src=08_llm/finetuning.md">
-        <span><span class="icon">🔧</span>Fine-Tuning LLMs — LoRA, RLHF, Instruction Tuning</span>
-        <span class="badge code">Code</span>
-      </a>
-    </div>
-  </div>
-
-</main>
-
-<footer>
-  Deep Learning M2 · Built with Reveal.js · All rights reserved
-</footer>
+    container.appendChild(card);
+  });
+</script>
 
 </body>
 </html>
