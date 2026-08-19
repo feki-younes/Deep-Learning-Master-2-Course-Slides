@@ -1,0 +1,301 @@
+<pr-canvas>
+{"type": "code", "title": "syllabus.html — Course Navigation Page", "language": "html", "filename": "syllabus.html"}
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Deep Learning M2 — Syllabus</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body { background: #0d0d1a; color: #e2e8f0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+
+    header {
+      background: linear-gradient(135deg, #0d0d1a 0%, #1a0a2e 100%);
+      border-bottom: 1px solid rgba(0,212,255,0.2);
+      padding: 2rem 3rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    header h1 {
+      background: linear-gradient(90deg, #00d4ff, #a855f7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; font-size: 1.8rem; margin: 0;
+    }
+
+    header a {
+      color: #00d4ff; text-decoration: none; font-size: 0.9rem;
+      border: 1px solid rgba(0,212,255,0.4); padding: 0.4em 1em;
+      border-radius: 20px; transition: all 0.2s;
+    }
+    header a:hover { background: rgba(0,212,255,0.1); }
+
+    main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    .intro-box {
+      background: rgba(0,212,255,0.05);
+      border: 1px solid rgba(0,212,255,0.2);
+      border-radius: 12px; padding: 1.2rem 1.8rem; margin-bottom: 2.5rem;
+    }
+    .intro-box p { margin: 0.3em 0; color: rgba(255,255,255,0.75); font-size: 0.95rem; }
+    .intro-box strong { color: #00d4ff; }
+
+    .chapter {
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px; overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .chapter:hover { border-color: rgba(0,212,255,0.35); }
+
+    .chapter-header {
+      background: rgba(255,255,255,0.03);
+      padding: 1rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .chapter-num {
+      background: linear-gradient(135deg, #00d4ff, #a855f7);
+      color: #0d0d1a; font-weight: 800; font-size: 0.8rem;
+      width: 2rem; height: 2rem; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .chapter-title { font-size: 1.05rem; font-weight: 700; color: #fff; }
+    .chapter-desc  { font-size: 0.82rem; color: rgba(255,255,255,0.5); margin-top: 0.15rem; }
+
+    .section-list { padding: 0.6rem 1.5rem 1rem; }
+
+    .section-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.55rem 0.8rem; border-radius: 8px;
+      transition: background 0.15s; text-decoration: none;
+      color: rgba(255,255,255,0.8); font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+    .section-item:hover { background: rgba(0,212,255,0.08); color: #00d4ff; }
+
+    .section-item .icon { margin-right: 0.6rem; font-size: 1rem; }
+
+    .section-item .badge {
+      font-size: 0.65rem; padding: 2px 8px; border-radius: 10px;
+      background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.4);
+      color: #a855f7; white-space: nowrap;
+    }
+
+    .badge.theory  { background: rgba(0,212,255,0.1); border-color: rgba(0,212,255,0.4); color: #00d4ff; }
+    .badge.code    { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.4); color: #22c55e; }
+    .badge.history { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.4); color: #fbbf24; }
+
+    footer {
+      text-align: center; padding: 2rem;
+      color: rgba(255,255,255,0.3); font-size: 0.8rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🧠 Deep Learning — M2</h1>
+    <p style="color:rgba(255,255,255,0.4); font-size:0.85rem; margin:0.3rem 0 0;">
+      From Perceptron to Large Language Models
+    </p>
+  </div>
+  <a href="index.html">⬅ Back to Login</a>
+</header>
+
+<main>
+
+  <div class="intro-box">
+    <p>🎯 <strong>Objective:</strong> Master the theory and practice of Deep Learning — from mathematical foundations to state-of-the-art architectures.</p>
+    <p>🛠 <strong>Framework:</strong> All practical sessions use <strong>PyTorch</strong>.</p>
+    <p>📐 <strong>Prerequisites:</strong> Linear algebra, probability, Python programming, basic ML.</p>
+    <p>🔗 Click any section below to open it as a presentation.</p>
+  </div>
+
+  <!-- Chapter 0 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">0</div>
+      <div>
+        <div class="chapter-title">Introduction</div>
+        <div class="chapter-desc">Course overview, objectives, tools and setup</div>
+      </div>
+    </div>
+    <div class="section-list">
+      <a class="section-item" href="presentation.html?src=00_introduction/intro.md">
+        <span><span class="icon">📌</span>Course Introduction & Roadmap</span>
+        <span class="badge theory">Theory</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Chapter 1 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">1</div>
+      <div>
+        <div class="chapter-title">History of Deep Learning</div>
+        <div class="chapter-desc">From McCulloch-Pitts to the modern era — why it took 70 years</div>
+      </div>
+    </div>
+    <div class="section-list">
+      <a class="section-item" href="presentation.html?src=01_history/history.md">
+        <span><span class="icon">📜</span>A Brief History of Neural Networks</span>
+        <span class="badge history">History</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Chapter 2 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">2</div>
+      <div>
+        <div class="chapter-title">Perceptron, MLP & Training Theory</div>
+        <div class="chapter-desc">Foundations: neurons, layers, backprop, optimisation, regularisation</div>
+      </div>
+    </div>
+    <div class="section-list">
+      <a class="section-item" href="presentation.html?src=02_perceptron_mlp/perceptron.md">
+        <span><span class="icon">⚡</span>The Perceptron & Activation Functions</span>
+        <span class="badge theory">Theory</span>
+      </a>
+      <a class="section-item" href="presentation.html?src=02_perceptron_mlp/mlp_fc.md">
+        <span><span class="icon">🔗</span>MLP, Backpropagation & Gradient Descent</span>
+        <span class="badge theory">Theory</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Chapter 3 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">3</div>
+      <div>
+        <div class="chapter-title">Convolutional Neural Networks</div>
+        <div class="chapter-desc">LeNet → AlexNet → VGG → ResNet → ResNeXt · Detection · Segmentation</div>
+      </div>
+    </div>
+    <div class="section-list">
+      <a class="section-item" href="presentation.html?src=03_cnn/cnn.md">
+        <span><span class="icon">🖼</span>CNN Architecture Deep Dive</span>
+        <span class="badge theory">Theory</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Chapter 4 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">4</div>
+      <div>
+        <div class="chapter-title">Recurrent Networks — RNN, GRU, LSTM</div>
+        <div class="chapter-desc">Sequential modelling, vanishing gradients, gating mechanisms</div>
+      </div>
+    </div>
+    <div class="section-list">
+      <a class="section-item" href="presentation.html?src=04_rnn_gru_lstm/rnn.md">
+        <span><span class="icon">🔄</span>Recurrent Neural Networks & BPTT</span>
+        <span class="badge theory">Theory</span>
+      </a>
+      <a class="section-item" href="presentation.html?src=04_rnn_gru_lstm/gru.md">
+        <span><span class="icon">🚪</span>Gated Recurrent Units (GRU)</span>
+        <span class="badge theory">Theory</span>
+      </a>
+      <a class="section-item" href="presentation.html?src=04_rnn_gru_lstm/lstm.md">
+        <span><span class="icon">🧱</span>Long Short-Term Memory (LSTM)</span>
+        <span class="badge theory">Theory</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Chapter 5 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">5</div>
+      <div>
+        <div class="chapter-title">Attention & Transformers</div>
+        <div class="chapter-desc">Self-attention, multi-head, positional encoding, BERT, ViT</div>
+      </div>
+    </div>
+    <div class="section-list">
+      <a class="section-item" href="presentation.html?src=05_transformers/attention.md">
+        <span><span class="icon">👁</span>Attention Mechanisms & Self-Attention</span>
+        <span class="badge theory">Theory</span>
+      </a>
+      <a class="section-item" href="presentation.html?src=05_transformers/transformers.md">
+        <span><span class="icon">🤖</span>The Transformer Architecture</span>
+        <span class="badge theory">Theory</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Chapter 6 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">6</div>
+      <div>
+        <div class="chapter-title">Reinforcement Learning</div>
+        <div class="chapter-desc">MDPs, Q-learning, policy gradients, PPO, RLHF</div>
+      </div>
+    </div>
+    <div class="section-list">
+      <a class="section-item" href="presentation.html?src=06_rl/rl.md">
+        <span><span class="icon">🎮</span>Deep Reinforcement Learning</span>
+        <span class="badge theory">Theory</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Chapter 7 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">7</div>
+      <div>
+        <div class="chapter-title">Generative Models — VAE, GAN, Diffusion</div>
+        <div class="chapter-desc">Latent spaces, adversarial training, score matching</div>
+      </div>
+    </div>
+    <div class="section-list">
+      <a class="section-item" href="presentation.html?src=07_gan/gan.md">
+        <span><span class="icon">🎨</span>GANs, VAEs & Diffusion Models</span>
+        <span class="badge theory">Theory</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Chapter 8 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">8</div>
+      <div>
+        <div class="chapter-title">Large Language Models & Fine-Tuning</div>
+        <div class="chapter-desc">GPT family, BERT, embeddings, RLHF, LoRA, instruction tuning</div>
+      </div>
+    </div>
+    <div class="section-list">
+      <a class="section-item" href="presentation.html?src=08_llm/llm.md">
+        <span><span class="icon">💬</span>Large Language Models — Architecture & Scale</span>
+        <span class="badge theory">Theory</span>
+      </a>
+      <a class="section-item" href="presentation.html?src=08_llm/finetuning.md">
+        <span><span class="icon">🔧</span>Fine-Tuning LLMs — LoRA, RLHF, Instruction Tuning</span>
+        <span class="badge code">Code</span>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Deep Learning M2 · Built with Reveal.js · All rights reserved
+</footer>
+
+</body>
+</html>
