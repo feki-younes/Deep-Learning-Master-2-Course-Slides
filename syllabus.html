@@ -542,8 +542,8 @@
     // Open first chapter by default
     if (idx === 0) card.classList.add('open');
 
-    const slidesHTML = ch.slides.map(s => `
-      <a class="slide-link" href="presentation.html?src=${s.file}" target="_blank">
+      const slidesHTML = ch.slides.map(s => `
+        <a class="slide-link" href="presentation.html?src=${s.file}">
         <span class="slide-icon">▶</span>
         <span class="slide-label">${s.label}</span>
         <span class="slide-tag">${s.tag}</span>
