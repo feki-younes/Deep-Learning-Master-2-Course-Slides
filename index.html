@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deep Learning — Master 2</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Animated neural network canvas background -->
+  <canvas id="neural-bg"></canvas>
+
+  <!-- Main card -->
+  <div class="login-wrapper">
+    <div class="login-card" id="login-card">
+
+      <!-- Header -->
+      <div class="card-header">
+        <div class="brain-icon">🧠</div>
+        <div class="course-badge">Master 2 · <span id="academic-year"></span></div>
+        <h1>Deep Learning</h1>
+        <p class="subtitle">Course Materials &amp; Lecture Slides</p>
+      </div>
+
+      <!-- Info strip -->
+      <div class="info-strip">
+        <div class="info-item">
+          <span class="info-icon">📚</span>
+          <span>Neural Networks &amp; Beyond</span>
+        </div>
+        <div class="info-item">
+          <span class="info-icon">🔬</span>
+          <span>Research-oriented curriculum</span>
+        </div>
+        <div class="info-item">
+          <span class="info-icon">🎓</span>
+          <span>Graduate level</span>
+        </div>
+      </div>
+
+      <!-- Auth form -->
+      <div class="auth-section">
+        <p class="auth-label">Enter your access code to view the slides</p>
+
+        <div class="input-group" id="input-group">
+          <span class="input-icon">🔑</span>
+          <input
+            type="password"
+            id="password-input"
+            placeholder="Access code"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button id="toggle-visibility" class="toggle-btn" title="Show/hide password">👁</button>
+        </div>
+
+        <!-- Attempt indicator (dots) -->
+        <div class="attempt-dots" id="attempt-dots">
+          <span class="dot" id="dot-1"></span>
+          <span class="dot" id="dot-2"></span>
+          <span class="dot" id="dot-3"></span>
+        </div>
+
+        <button class="submit-btn" id="submit-btn" onclick="handleSubmit()">
+          <span id="btn-text">Access Slides</span>
+          <span id="btn-spinner" class="spinner hidden"></span>
+        </button>
+
+        <!-- Feedback message -->
+        <div class="feedback" id="feedback"></div>
+      </div>
+
+      <!-- Footer -->
+      <div class="card-footer">
+        <span>🔒 Access restricted to enrolled students</span>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ─────────────────────────────────────────────────────────────────────────
+    // CONFIGURATION — edit these two values to customise the course
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // SHA-256 hash of the access password.
+    // Default password: deeplearning2025
+    // To generate a new hash: https://emn178.github.io/online-tools/sha256.html
+    const PASSWORD_HASH = "b5a545b9f3e9c2d4e8f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3";
+
+    // Expiry date encoded in Base64 (obfuscated, not encrypted).
+    // Decoded value: "2026-07-01"  →  btoa("2026-07-01") = "MjAyNi0wNy0wMQ=="
+    // To change: run btoa("YYYY-MM-DD") in your browser console.
+    const EXPIRY_B64 = "MjAyNi0wNy0wMQ==";
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // ANTI-BRUTE-FORCE STATE
+    // ─────────────────────────────────────────────────────────────────────────
+    const MAX_ATTEMPTS = 3;
+    let attempts = 0;
+    let lockUntil  = 0;   // timestamp (ms) until which the form is locked
+    let lockTimer  = null;
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // ACADEMIC YEAR COMPUTATION
+    // September or later  → current year / next year   (e.g. 2025–2026)
+    // Before September    → previous year / current year (e.g. 2024–2025)
+    // ─────────────────────────────────────────────────────────────────────────
+    (function setAcademicYear() {
+      const now   = new Date();
+      const month = now.getMonth(); // 0 = January … 8 = September
+      const year  = now.getFullYear();
+      const label = month >= 8
+        ? `${year}–${year + 1}`
+        : `${year - 1}–${year}`;
+      document.getElementById("academic-year").textContent = label;
+    })();
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // SHA-256 via Web Crypto API (native, no library needed)
+    // ─────────────────────────────────────────────────────────────────────────
+    async function sha256(message) {
+      const msgBuffer  = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+      const hashArray  = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // EXPIRY CHECK
+    // ─────────────────────────────────────────────────────────────────────────
+    function isExpired() {
+      try {
+        const expiryStr  = atob(EXPIRY_B64);          // decode Base64
+        const expiryDate = new Date(expiryStr + "T00:00:00");
+        return new Date() >= expiryDate;
+      } catch {
+        return true; // if decoding fails, deny access by default
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // LOCK MANAGEMENT — exponential back-off after MAX_ATTEMPTS failures
+    // ─────────────────────────────────────────────────────────────────────────
+    function applyLock(durationMs) {
+      lockUntil = Date.now() + durationMs;
+      const btn   = document.getElementById("submit-btn");
+      const input = document.getElementById("password-input");
+      btn.disabled   = true;
+      input.disabled = true;
+
+      // Countdown display
+      lockTimer = setInterval(() => {
+        const remaining = Math.ceil((lockUntil - Date.now()) / 1000);
+        if (remaining <= 0) {
+          clearInterval(lockTimer);
+          btn.disabled   = false;
+          input.disabled = false;
+          document.getElementById("btn-text").textContent = "Access Slides";
+          setFeedback("", "");
+        } else {
+          document.getElementById("btn-text").textContent = `Locked — ${remaining}s`;
+        }
+      }, 250);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // FEEDBACK HELPER
+    // ─────────────────────────────────────────────────────────────────────────
+    function setFeedback(message, type) {
+      const el = document.getElementById("feedback");
+      el.textContent  = message;
+      el.className    = `feedback ${type}`;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // UPDATE ATTEMPT DOTS
+    // ─────────────────────────────────────────────────────────────────────────
+    function updateDots() {
+      for (let i = 1; i <= MAX_ATTEMPTS; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        dot.className = i <= attempts ? "dot dot-used" : "dot";
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // TOGGLE PASSWORD VISIBILITY
+    // ─────────────────────────────────────────────────────────────────────────
+    document.getElementById("toggle-visibility").addEventListener("click", () => {
+      const input = document.getElementById("password-input");
+      input.type  = input.type === "password" ? "text" : "password";
+    });
+
+    // Allow Enter key to submit
+    document.getElementById("password-input").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleSubmit();
+    });
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // MAIN SUBMIT HANDLER
+    // ─────────────────────────────────────────────────────────────────────────
+    async function handleSubmit() {
+      // Still locked?
+      if (Date.now() < lockUntil) return;
+
+      // Check expiry first
+      if (isExpired()) {
+        setFeedback("⏰ Access to this course has expired. Please contact your instructor.", "error");
+        document.getElementById("submit-btn").disabled = true;
+        document.getElementById("password-input").disabled = true;
+        return;
+      }
+
+      const input    = document.getElementById("password-input");
+      const password = input.value.trim();
+
+      if (!password) {
+        setFeedback("Please enter your access code.", "warning");
+        input.focus();
+        return;
+      }
+
+      // Show spinner
+      document.getElementById("btn-text").classList.add("hidden");
+      document.getElementById("btn-spinner").classList.remove("hidden");
+      document.getElementById("submit-btn").disabled = true;
+
+      // Small artificial delay to prevent timing attacks
+      await new Promise(r => setTimeout(r, 400 + Math.random() * 200));
+
+      const hash = await sha256(password);
+
+      // Hide spinner
+      document.getElementById("btn-text").classList.remove("hidden");
+      document.getElementById("btn-spinner").classList.add("hidden");
+      document.getElementById("submit-btn").disabled = false;
+
+      if (hash === PASSWORD_HASH) {
+        // ✅ Success
+        setFeedback("✅ Access granted! Loading slides…", "success");
+        document.getElementById("login-card").classList.add("card-success");
+        setTimeout(() => { window.location.href = "presentation.html"; }, 800);
+      } else {
+        // ❌ Wrong password
+        attempts++;
+        updateDots();
+        input.value = "";
+
+        if (attempts >= MAX_ATTEMPTS) {
+          // Exponential back-off: 8s, 16s, 32s …
+          const lockDuration = Math.pow(2, attempts - MAX_ATTEMPTS + 3) * 1000;
+          setFeedback(`❌ Too many failed attempts. Please wait…`, "error");
+          applyLock(lockDuration);
+        } else {
+          const remaining = MAX_ATTEMPTS - attempts;
+          setFeedback(
+            `❌ Incorrect access code. ${remaining} attempt${remaining > 1 ? "s" : ""} remaining.`,
+            "error"
+          );
+          input.focus();
+          // Shake animation
+          document.getElementById("input-group").classList.add("shake");
+          setTimeout(() => document.getElementById("input-group").classList.remove("shake"), 500);
+        }
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // NEURAL NETWORK BACKGROUND ANIMATION
+    // ─────────────────────────────────────────────────────────────────────────
+    (function initNeuralBackground() {
+      const canvas = document.getElementById("neural-bg");
+      const ctx    = canvas.getContext("2d");
+
+      let W, H, nodes;
+      const NODE_COUNT    = 60;
+      const MAX_DIST      = 160;
+      const NODE_RADIUS   = 2.5;
+      const PULSE_SPEED   = 0.012;
+
+      function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+
+      function createNodes() {
+        nodes = Array.from({ length: NODE_COUNT }, () => ({
+          x:   Math.random() * W,
+          y:   Math.random() * H,
+          vx:  (Math.random() - 0.5) * 0.4,
+          vy:  (Math.random() - 0.5) * 0.4,
+          phase: Math.random() * Math.PI * 2,  // for pulsing opacity
+        }));
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Update positions
+        nodes.forEach(n => {
+          n.x += n.vx;
+          n.y += n.vy;
+          n.phase += PULSE_SPEED;
+          if (n.x < 0 || n.x > W) n.vx *= -1;
+          if (n.y < 0 || n.y > H) n.vy *= -1;
+        });
+
+        // Draw edges
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dx   = nodes[i].x - nodes[j].x;
+            const dy   = nodes[i].y - nodes[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < MAX_DIST) {
+              const alpha = (1 - dist / MAX_DIST) * 0.25;
+              ctx.beginPath();
+              ctx.moveTo(nodes[i].x, nodes[i].y);
+              ctx.lineTo(nodes[j].x, nodes[j].y);
+              ctx.strokeStyle = `rgba(99, 179, 237, ${alpha})`;
+              ctx.lineWidth   = 0.8;
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Draw nodes
+        nodes.forEach(n => {
+          const pulse = 0.5 + 0.5 * Math.sin(n.phase);
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, NODE_RADIUS, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(129, 140, 248, ${0.4 + 0.4 * pulse})`;
+          ctx.fill();
+        });
+
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener("resize", () => { resize(); createNodes(); });
+      resize();
+      createNodes();
+      draw();
+    })();
+  </script>
+</body>
+</html>
