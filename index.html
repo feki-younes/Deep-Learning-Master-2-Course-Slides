@@ -242,10 +242,10 @@
       document.getElementById("submit-btn").disabled = false;
 
       if (hash === PASSWORD_HASH) {
-        // ✅ Success
+        sessionStorage.setItem('dl_auth', '1'); // ← indispensable
         setFeedback("✅ Access granted! Loading slides…", "success");
         document.getElementById("login-card").classList.add("card-success");
-        setTimeout(() => { window.location.href = "presentation.html"; }, 800);
+        setTimeout(() => { window.location.href = "syllabus.html"; }, 800);
       } else {
         // ❌ Wrong password
         attempts++;
