@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deep Learning — Lecture Slides</title>
+
+  <!-- Reveal.js CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/night.css" />
+  <!-- Syntax highlighting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Custom overrides on top of Reveal night theme ── */
+    :root {
+      --r-background-color:   #0a0e1a;
+      --r-main-font:          'Inter', system-ui, sans-serif;
+      --r-main-font-size:     36px;
+      --r-main-color:         #e2e8f0;
+      --r-heading-font:       'Inter', system-ui, sans-serif;
+      --r-heading-color:      #e2e8f0;
+      --r-heading-font-weight: 700;
+      --r-link-color:         #63b3ed;
+      --r-code-font:          'JetBrains Mono', monospace;
+    }
+
+    /* Gradient title text */
+    .grad {
+      background: linear-gradient(135deg, #63b3ed 0%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Accent pill / badge */
+    .badge {
+      display: inline-block;
+      font-size: 0.45em;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #818cf8;
+      background: rgba(129, 140, 248, 0.15);
+      border: 1px solid rgba(129, 140, 248, 0.35);
+      border-radius: 999px;
+      padding: 0.2em 0.8em;
+      vertical-align: middle;
+      margin-left: 0.4em;
+      -webkit-text-fill-color: #818cf8;
+    }
+
+    /* Glassmorphism box */
+    .glass-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 0.8em 1.2em;
+      margin: 0.5em 0;
+      backdrop-filter: blur(8px);
+    }
+
+    /* Two-column layout */
+    .cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2em;
+      align-items: start;
+    }
+
+    .cols-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1em;
+      align-items: start;
+    }
+
+    /* Highlight colors */
+    .hl-blue   { color: #63b3ed; }
+    .hl-purple { color: #a78bfa; }
+    .hl-green  { color: #34d399; }
+    .hl-red    { color: #f87171; }
+    .hl-yellow { color: #fbbf24; }
+
+    /* Formula box */
+    .formula {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75em;
+      background: rgba(99, 179, 237, 0.08);
+      border-left: 3px solid #63b3ed;
+      border-radius: 0 8px 8px 0;
+      padding: 0.6em 1em;
+      margin: 0.4em 0;
+      text-align: left;
+    }
+
+    /* Timeline step */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+      text-align: left;
+    }
+
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8em;
+      font-size: 0.75em;
+    }
+
+    .timeline-year {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      color: #818cf8;
+      min-width: 3.5em;
+      font-weight: 600;
+    }
+
+    /* Neuron diagram (pure CSS) */
+    .neuron-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.6em;
+      flex-wrap: wrap;
+      margin: 0.5em 0;
+    }
+
+    .neuron {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.5em;
+      font-weight: 600;
+      border: 2px solid;
+    }
+
+    .neuron-input  { background: rgba(99,179,237,0.2);  border-color: #63b3ed; color: #63b3ed; }
+    .neuron-hidden { background: rgba(167,139,250,0.2); border-color: #a78bfa; color: #a78bfa; }
+    .neuron-output { background: rgba(52,211,153,0.2);  border-color: #34d399; color: #34d399; }
+
+    .arrow { color: #94a3b8; font-size: 1.2em; }
+
+    /* Reveal overrides */
+    .reveal .slides section { text-align: left; }
+    .reveal .slides section.center-slide { text-align: center; }
+    .reveal h1 { font-size: 1.6em; }
+    .reveal h2 { font-size: 1.25em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3em; margin-bottom: 0.6em; }
+    .reveal h3 { font-size: 1em; color: #94a3b8; font-weight: 400; }
+    .reveal ul  { margin-left: 1.2em; }
+    .reveal li  { margin-bottom: 0.35em; font-size: 0.78em; line-height: 1.5; }
+    .reveal pre { font-size: 0.55em; border-radius: 10px; }
+    .reveal code { border-radius: 4px; }
+    .reveal .progress { color: #818cf8; }
+    .reveal .controls { color: #818cf8; }
+
+    /* Back button */
+    .back-btn {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 100;
+      background: rgba(15, 22, 41, 0.8);
+      border: 1px solid rgba(99, 179, 237, 0.3);
+      border-radius: 8px;
+      color: #63b3ed;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+    }
+    .back-btn:hover {
+      background: rgba(99, 179, 237, 0.15);
+      border-color: #63b3ed;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="index.html" class="back-btn">← Back</a>
+
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ══════════════════════════════════════════════════════
+           SLIDE 1 — Title
+      ══════════════════════════════════════════════════════ -->
+      <section class="center-slide" data-background-gradient="radial-gradient(ellipse at center, #0d1b3e 0%, #0a0e1a 70%)">
+        <div style="margin-bottom:0.5em; font-size:3.5em;">🧠</div>
+        <h1 class="grad">Deep Learning</h1>
+        <h3 style="color:#94a3b8; margin-top:0.4em;">From Perceptrons to Transformers</h3>
+        <div style="margin-top:1.2em;">
+          <span class="badge" style="-webkit-text-fill-color:#818cf8;">Master 2</span>
+          <span class="badge" style="-webkit-text-fill-color:#818cf8;">Academic Year <span id="slide-year"></span></span>
+        </div>
+        <p style="margin-top:1.5em; font-size:0.55em; color:#64748b;">
+          Use arrow keys or swipe to navigate · Press <kbd style="background:rgba(255,255,255,0.1);padding:0.1em 0.4em;border-radius:4px;">F</kbd> for fullscreen
+        </p>
+        <script>
+          // Academic year label (same logic as index.html)
+          (function() {
+            const m = new Date().getMonth(), y = new Date().getFullYear();
+            document.getElementById("slide-year").textContent = m >= 8 ? `${y}–${y+1}` : `${y-1}–${y}`;
+          })();
+        </script>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           SLIDE 2 — Course Overview
+      ══════════════════════════════════════════════════════ -->
+      <section>
+        <h2>📋 Course Overview</h2>
+        <div class="cols">
+          <div>
+            <p style="font-size:0.7em; color:#94a3b8; margin-bottom:0.6em;">What you will learn</p>
+            <ul>
+              <li>Foundations of neural networks</li>
+              <li>Convolutional Neural Networks (CNNs)</li>
+              <li>Recurrent architectures (RNN, LSTM, GRU)</li>
+              <li>Attention mechanisms &amp; Transformers</li>
+              <li>Generative models (VAE, GAN, Diffusion)</li>
+              <li>Training at scale &amp; best practices</li>
+            </ul>
+          </div>
+          <div>
+            <p style="font-size:0.7em; color:#94a3b8; margin-bottom:0.6em;">Prerequisites</p>
+            <ul>
+              <li>Linear algebra &amp; calculus</li>
+              <li>Probability &amp; statistics</li>
+              <li>Classical ML (M1 level)</li>
+              <li>Python / NumPy / PyTorch basics</li>
+            </ul>
+            <div class="glass-box" style="margin-top:0.8em;">
+              <p style="font-size:0.65em; color:#fbbf24;">⚠️ Assignments are individual unless stated otherwise.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           SLIDE 3 — A Brief History
+      ══════════════════════════════════════════════════════ -->
+      <section>
+        <h2>📅 A Brief History of Deep Learning</h2>
+        <div class="timeline">
+          <div class="timeline-item"><span class="timeline-year">1943</span><span>McCulloch &amp; Pitts — first mathematical neuron model</span></div>
+          <div class="timeline-item"><span class="timeline-year">1958</span><span>Rosenblatt — <span class="hl-blue">Perceptron</span></span></div>
+          <div class="timeline-item"><span class="timeline-year">1986</span><span>Rumelhart, Hinton, Williams — <span class="hl-purple">Backpropagation</span></span></div>
+          <div class="timeline-item"><span class="timeline-year">1998</span><span>LeCun — <span class="hl-blue">LeNet</span>, first practical CNN</span></div>
+          <div class="timeline-item"><span class="timeline-year">2012</span><span>Krizhevsky — <span class="hl-purple">AlexNet</span> wins ImageNet by a large margin 🚀</span></div>
+          <div class="timeline-item"><span class="timeline-year">2014</span><span>Goodfellow — <span class="hl-green">GANs</span></span></div>
+          <div class="timeline-item"><span class="timeline-year">2017</span><span>Vaswani et al. — <span class="hl-yellow">"Attention Is All You Need"</span> (Transformer)</span></div>
+          <div class="timeline-item"><span class="timeline-year">2020+</span><span>GPT-3, DALL·E, Stable Diffusion, LLaMA, Gemini…</span></div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           SLIDE 4 — The Neuron
+      ══════════════════════════════════════════════════════ -->
+      <section>
+        <h2>⚡ The Artificial Neuron</h2>
+        <div class="neuron-row">
+          <div class="neuron neuron-input">x₁</div>
+          <div class="neuron neuron-input">x₂</div>
+          <div class="neuron neuron-input">x₃</div>
+          <span class="arrow">→</span>
+          <div class="neuron neuron-hidden" style="width:56px;height:56px;">Σ + f</div>
+          <span class="arrow">→</span>
+          <div class="neuron neuron-output">ŷ</div>
+        </div>
+        <div class="formula">ŷ = f( w₁x₁ + w₂x₂ + w₃x₃ + b )</div>
+        <div class="cols" style="margin-top:0.8em;">
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Common activation functions</p>
+            <ul>
+              <li><span class="hl-blue">Sigmoid</span>: σ(z) = 1 / (1 + e⁻ᶻ)</li>
+              <li><span class="hl-purple">Tanh</span>: (eᶻ − e⁻ᶻ) / (eᶻ + e⁻ᶻ)</li>
+              <li><span class="hl-green">ReLU</span>: max(0, z)  ← most used today</li>
+              <li><span class="hl-yellow">GELU</span>: used in Transformers</li>
+            </ul>
+          </div>
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Why non-linearity?</p>
+            <div class="glass-box">
+              <p style="font-size:0.65em;">Without activation functions, stacking layers is equivalent to a single linear transformation — no matter how deep the network.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           SLIDE 5 — Backpropagation
+      ══════════════════════════════════════════════════════ -->
+      <section>
+        <h2>🔄 Backpropagation</h2>
+        <p style="font-size:0.72em; color:#94a3b8;">The engine behind all neural network training</p>
+        <div class="glass-box" style="margin:0.6em 0;">
+          <p style="font-size:0.68em;">Backprop applies the <span class="hl-blue">chain rule</span> of calculus to efficiently compute the gradient of the loss with respect to every parameter in the network.</p>
+        </div>
+        <div class="formula">∂L/∂wᵢ = ∂L/∂ŷ · ∂ŷ/∂zᵢ · ∂zᵢ/∂wᵢ</div>
+        <div class="cols" style="margin-top:0.8em;">
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Training loop</p>
+            <ul>
+              <li><span class="hl-blue">Forward pass</span>: compute predictions</li>
+              <li><span class="hl-purple">Loss</span>: measure error (MSE, CE…)</li>
+              <li><span class="hl-green">Backward pass</span>: compute gradients</li>
+              <li><span class="hl-yellow">Update</span>: w ← w − η · ∂L/∂w</li>
+            </ul>
+          </div>
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Optimizers</p>
+            <ul>
+              <li>SGD (+ momentum)</li>
+              <li>RMSProp</li>
+              <li><span class="hl-green">Adam</span> ← default choice</li>
+              <li>AdamW (weight decay)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           SLIDE 6 — CNNs
+      ══════════════════════════════════════════════════════ -->
+      <section>
+        <h2>🖼️ Convolutional Neural Networks</h2>
+        <div class="cols">
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Key ideas</p>
+            <ul>
+              <li><span class="hl-blue">Local connectivity</span>: each neuron sees a small patch</li>
+              <li><span class="hl-purple">Weight sharing</span>: same filter across the image</li>
+              <li><span class="hl-green">Pooling</span>: spatial downsampling</li>
+              <li><span class="hl-yellow">Translation invariance</span></li>
+            </ul>
+            <div class="formula" style="margin-top:0.6em;">Output size = ⌊(N − F + 2P) / S⌋ + 1</div>
+            <p style="font-size:0.55em; color:#64748b;">N=input, F=filter, P=padding, S=stride</p>
+          </div>
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Landmark architectures</p>
+            <ul>
+              <li>LeNet-5 (1998)</li>
+              <li>AlexNet (2012) — ReLU, Dropout</li>
+              <li>VGG-16 (2014) — depth</li>
+              <li>ResNet (2015) — <span class="hl-green">skip connections</span></li>
+              <li>EfficientNet (2019) — compound scaling</li>
+              <li>ConvNeXt (2022) — modernised CNN</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           SLIDE 7 — Attention & Transformers
+      ══════════════════════════════════════════════════════ -->
+      <section>
+        <h2>🔮 Attention &amp; Transformers</h2>
+        <div class="glass-box" style="margin-bottom:0.7em;">
+          <p style="font-size:0.68em;"><span class="hl-purple">Self-attention</span> allows every token to attend to every other token in the sequence — capturing long-range dependencies that RNNs struggle with.</p>
+        </div>
+        <div class="formula">Attention(Q, K, V) = softmax( QKᵀ / √dₖ ) · V</div>
+        <div class="cols" style="margin-top:0.8em;">
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Transformer block</p>
+            <ul>
+              <li>Multi-Head Self-Attention</li>
+              <li>Add &amp; LayerNorm</li>
+              <li>Feed-Forward Network (FFN)</li>
+              <li>Add &amp; LayerNorm</li>
+            </ul>
+          </div>
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Applications</p>
+            <ul>
+              <li><span class="hl-blue">NLP</span>: BERT, GPT, T5, LLaMA</li>
+              <li><span class="hl-purple">Vision</span>: ViT, DINO, SAM</li>
+              <li><span class="hl-green">Multimodal</span>: CLIP, Flamingo, Gemini</li>
+              <li><span class="hl-yellow">Audio</span>: Whisper, AudioLM</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           SLIDE 8 — Generative Models
+      ══════════════════════════════════════════════════════ -->
+      <section>
+        <h2>🎨 Generative Models</h2>
+        <div class="cols-3">
+          <div class="glass-box">
+            <p style="font-size:0.65em; font-weight:600; color:#63b3ed; margin-bottom:0.4em;">VAE</p>
+            <p style="font-size:0.6em;">Encodes input into a <em>distribution</em> in latent space. Enables smooth interpolation and generation.</p>
+            <div class="formula" style="font-size:0.7em;">L = Lᵣₑ꜀ + β·KL(q‖p)</div>
+          </div>
+          <div class="glass-box">
+            <p style="font-size:0.65em; font-weight:600; color:#a78bfa; margin-bottom:0.4em;">GAN</p>
+            <p style="font-size:0.6em;">Generator vs. Discriminator adversarial game. Produces sharp, realistic samples.</p>
+            <div class="formula" style="font-size:0.7em;">min_G max_D V(D,G)</div>
+          </div>
+          <div class="glass-box">
+            <p style="font-size:0.65em; font-weight:600; color:#34d399; margin-bottom:0.4em;">Diffusion</p>
+            <p style="font-size:0.6em;">Learns to reverse a gradual noising process. State-of-the-art image &amp; audio generation.</p>
+            <div class="formula" style="font-size:0.7em;">xₜ = √ᾱₜ x₀ + √(1−ᾱₜ) ε</div>
+          </div>
+        </div>
+        <p style="font-size:0.6em; color:#64748b; margin-top:0.8em; text-align:center;">Stable Diffusion · DALL·E 3 · Sora · MusicGen are all diffusion-based</p>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           SLIDE 9 — Training at Scale
+      ══════════════════════════════════════════════════════ -->
+      <section>
+        <h2>⚙️ Training at Scale</h2>
+        <div class="cols">
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Regularisation</p>
+            <ul>
+              <li><span class="hl-blue">Dropout</span>: randomly zero activations</li>
+              <li><span class="hl-purple">Batch Norm</span>: normalise per mini-batch</li>
+              <li><span class="hl-green">Layer Norm</span>: preferred in Transformers</li>
+              <li><span class="hl-yellow">Weight decay</span>: L2 penalty on weights</li>
+              <li>Data augmentation</li>
+            </ul>
+          </div>
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Practical tips</p>
+            <ul>
+              <li>Start with a <span class="hl-blue">learning rate finder</span></li>
+              <li>Use <span class="hl-purple">mixed precision</span> (fp16 / bf16)</li>
+              <li>Monitor <span class="hl-green">train vs. val loss</span> curves</li>
+              <li>Gradient clipping for stability</li>
+              <li>Cosine LR schedule + warmup</li>
+            </ul>
+          </div>
+        </div>
+        <div class="glass-box" style="margin-top:0.8em;">
+          <p style="font-size:0.65em;">💡 <span class="hl-yellow">Transfer learning</span> — fine-tuning a pre-trained model — is almost always better than training from scratch when data is limited.</p>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           SLIDE 10 — PyTorch Quickstart
+      ══════════════════════════════════════════════════════ -->
+      <section>
+        <h2>🐍 PyTorch Quickstart</h2>
+        <pre><code class="language-python" data-trim>
+import torch
+import torch.nn as nn
+
+# A simple 3-layer MLP
+class MLP(nn.Module):
+    def __init__(self, in_dim, hidden, out_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(in_dim, hidden),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(hidden, hidden),
+            nn.ReLU(),
+            nn.Linear(hidden, out_dim),
+        )
+
+    def forward(self, x):
+        return self.net(x)
+
+model     = MLP(784, 256, 10).to("cuda")
+optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4)
+criterion = nn.CrossEntropyLoss()
+
+# Training step
+optimizer.zero_grad()
+logits = model(x_batch)          # forward pass
+loss   = criterion(logits, y)    # compute loss
+loss.backward()                  # backprop
+optimizer.step()                 # update weights
+        </code></pre>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           SLIDE 11 — Assignments & Evaluation
+      ══════════════════════════════════════════════════════ -->
+      <section>
+        <h2>📝 Assignments &amp; Evaluation</h2>
+        <div class="cols">
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Grading breakdown</p>
+            <ul>
+              <li><span class="hl-blue">Lab sessions</span> (3 × 10%) — 30%</li>
+              <li><span class="hl-purple">Midterm exam</span> — 20%</li>
+              <li><span class="hl-green">Final project</span> — 40%</li>
+              <li><span class="hl-yellow">Participation</span> — 10%</li>
+            </ul>
+          </div>
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Final project</p>
+            <ul>
+              <li>Groups of 2–3 students</li>
+              <li>Reproduce a recent paper <em>or</em> original application</li>
+              <li>Written report (6–8 pages)</li>
+              <li>10-minute oral presentation</li>
+            </ul>
+          </div>
+        </div>
+        <div class="glass-box" style="margin-top:0.8em;">
+          <p style="font-size:0.65em;">📅 Project topics must be validated by <span class="hl-yellow">Week 4</span>. Late submissions lose 2 points per day.</p>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           SLIDE 12 — Resources
+      ══════════════════════════════════════════════════════ -->
+      <section>
+        <h2>📚 Recommended Resources</h2>
+        <div class="cols">
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Books</p>
+            <ul>
+              <li><span class="hl-blue">Deep Learning</span> — Goodfellow, Bengio, Courville (free online)</li>
+              <li><span class="hl-purple">Dive into Deep Learning</span> — d2l.ai (interactive)</li>
+              <li><span class="hl-green">Understanding Deep Learning</span> — Simon Prince</li>
+            </ul>
+          </div>
+          <div>
+            <p style="font-size:0.65em; color:#94a3b8; margin-bottom:0.4em;">Online courses</p>
+            <ul>
+              <li>fast.ai — Practical Deep Learning</li>
+              <li>Stanford CS231n — CNNs for Visual Recognition</li>
+              <li>Stanford CS224n — NLP with Deep Learning</li>
+              <li>Andrej Karpathy — Neural Networks: Zero to Hero</li>
+            </ul>
+          </div>
+        </div>
+        <div class="glass-box" style="margin-top:0.8em; text-align:center;">
+          <p style="font-size:0.65em;">🤗 <span class="hl-yellow">Hugging Face</span> — models, datasets, and tutorials for everything Transformer-related</p>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           SLIDE 13 — Let's Get Started
+      ══════════════════════════════════════════════════════ -->
+      <section class="center-slide" data-background-gradient="radial-gradient(ellipse at center, #0d1b3e 0%, #0a0e1a 70%)">
+        <div style="font-size:3em; margin-bottom:0.5em;">🚀</div>
+        <h1 class="grad">Let's Get Started!</h1>
+        <p style="font-size:0.7em; color:#94a3b8; margin-top:0.8em;">
+          "The best way to understand deep learning<br/>is to implement it yourself."
+        </p>
+        <div class="glass-box" style="margin-top:1.2em; text-align:center; max-width:420px; margin-left:auto; margin-right:auto;">
+          <p style="font-size:0.65em;">Next lecture: <span class="hl-blue">Lab 1 — Building a neural network from scratch with NumPy</span></p>
+        </div>
+        <p style="margin-top:1.5em; font-size:0.5em; color:#475569;">Questions? Reach out during office hours or on the course forum.</p>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Reveal.js scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+
+  <script>
+    Reveal.initialize({
+      hash:             true,
+      slideNumber:      "c/t",
+      transition:       "slide",
+      transitionSpeed:  "default",
+      controls:         true,
+      progress:         true,
+      center:           false,
+      plugins:          [RevealHighlight, RevealNotes],
+    });
+  </script>
+</body>
+</html>
