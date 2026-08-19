@@ -1,0 +1,374 @@
+/* ============================================================
+   style.css — Deep Learning Course · Master 2
+   Dark neural-network theme with glassmorphism card
+   ============================================================ */
+
+/* ── Reset & base ─────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-dark:       #0a0e1a;
+  --bg-mid:        #0f1629;
+  --accent-blue:   #63b3ed;
+  --accent-indigo: #818cf8;
+  --accent-purple: #a78bfa;
+  --accent-green:  #34d399;
+  --accent-red:    #f87171;
+  --accent-yellow: #fbbf24;
+  --text-primary:  #e2e8f0;
+  --text-muted:    #94a3b8;
+  --glass-bg:      rgba(15, 22, 41, 0.75);
+  --glass-border:  rgba(99, 179, 237, 0.18);
+  --glass-shadow:  0 8px 64px rgba(0, 0, 0, 0.6);
+  --radius-lg:     20px;
+  --radius-md:     12px;
+  --radius-sm:     8px;
+  --font-main:     'Inter', system-ui, sans-serif;
+  --font-mono:     'JetBrains Mono', 'Fira Code', monospace;
+  --transition:    0.25s ease;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-main);
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+/* ── Neural canvas background ─────────────────────────────── */
+#neural-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(ellipse at 20% 50%, #0d1b3e 0%, var(--bg-dark) 60%),
+              radial-gradient(ellipse at 80% 20%, #1a0d3e 0%, transparent 50%);
+}
+
+/* ── Layout wrapper ───────────────────────────────────────── */
+.login-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+/* ── Glassmorphism card ───────────────────────────────────── */
+.login-card {
+  width: 100%;
+  max-width: 460px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  padding: 2.5rem 2.25rem 2rem;
+  animation: card-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: box-shadow var(--transition), border-color var(--transition);
+}
+
+.login-card:hover {
+  box-shadow: 0 12px 80px rgba(99, 179, 237, 0.12), var(--glass-shadow);
+}
+
+.login-card.card-success {
+  border-color: rgba(52, 211, 153, 0.5);
+  box-shadow: 0 0 60px rgba(52, 211, 153, 0.2), var(--glass-shadow);
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(28px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* ── Card header ──────────────────────────────────────────── */
+.card-header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.brain-icon {
+  font-size: 3.2rem;
+  line-height: 1;
+  margin-bottom: 0.75rem;
+  display: block;
+  animation: float 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px rgba(167, 139, 250, 0.6));
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0);    }
+  50%       { transform: translateY(-8px); }
+}
+
+.course-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-indigo);
+  background: rgba(129, 140, 248, 0.12);
+  border: 1px solid rgba(129, 140, 248, 0.3);
+  border-radius: 999px;
+  padding: 0.25rem 0.85rem;
+  margin-bottom: 0.9rem;
+}
+
+.card-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.35rem;
+}
+
+.subtitle {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* ── Info strip ───────────────────────────────────────────── */
+.info-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.1rem;
+  margin-bottom: 1.75rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.info-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* ── Auth section ─────────────────────────────────────────── */
+.auth-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.auth-label {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ── Input group ──────────────────────────────────────────── */
+.input-group {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 0 0.75rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.input-group:focus-within {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.15);
+}
+
+.input-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-right: 0.5rem;
+  opacity: 0.7;
+}
+
+.input-group input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  padding: 0.8rem 0;
+  letter-spacing: 0.05em;
+}
+
+.input-group input::placeholder {
+  color: var(--text-muted);
+  font-family: var(--font-main);
+  letter-spacing: normal;
+  font-size: 0.88rem;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0.5;
+  padding: 0.25rem;
+  transition: opacity var(--transition);
+  flex-shrink: 0;
+}
+
+.toggle-btn:hover { opacity: 1; }
+
+/* ── Attempt dots ─────────────────────────────────────────── */
+.attempt-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.dot-used {
+  background: var(--accent-red);
+  border-color: var(--accent-red);
+  box-shadow: 0 0 8px rgba(248, 113, 113, 0.5);
+}
+
+/* ── Submit button ────────────────────────────────────────── */
+.submit-btn {
+  width: 100%;
+  padding: 0.85rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: #fff;
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.35);
+}
+
+.submit-btn:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 28px rgba(59, 130, 246, 0.45);
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submit-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Spinner ──────────────────────────────────────────────── */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.hidden { display: none !important; }
+
+/* ── Feedback message ─────────────────────────────────────── */
+.feedback {
+  min-height: 1.4rem;
+  font-size: 0.83rem;
+  text-align: center;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  transition: all var(--transition);
+}
+
+.feedback:empty { padding: 0; }
+
+.feedback.error {
+  color: var(--accent-red);
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+}
+
+.feedback.success {
+  color: var(--accent-green);
+  background: rgba(52, 211, 153, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+}
+
+.feedback.warning {
+  color: var(--accent-yellow);
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+}
+
+/* ── Card footer ──────────────────────────────────────────── */
+.card-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* ── Shake animation (wrong password) ────────────────────── */
+@keyframes shake {
+  0%, 100% { transform: translateX(0);    }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px);  }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px);  }
+}
+
+.shake { animation: shake 0.45s ease; }
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 2rem 1.5rem 1.75rem;
+  }
+
+  .card-header h1 {
+    font-size: 1.7rem;
+  }
+
+  .brain-icon {
+    font-size: 2.6rem;
+  }
+}
