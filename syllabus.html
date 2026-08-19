@@ -442,6 +442,11 @@
 </div>
 
 <script>
+  // ── Auth guard ───────────────────────────────────────────────
+  if (sessionStorage.getItem('dl_auth') !== '1') {
+    window.location.href = 'index.html';
+  }
+  
   // ── Academic year logic ──────────────────────────────────────
   function getAcademicYear() {
     const now   = new Date();
