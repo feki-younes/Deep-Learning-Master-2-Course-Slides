@@ -3,326 +3,262 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Deep Learning — M2</title>
   <link rel="icon" type="image/x-icon" href="icon.png">
+  <title>Deep Learning — M2</title>
 
-  <!-- Reveal.js core -->
+  <!-- Reveal.js -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/night.css" />
 
-  <!-- Syntax highlighting -->
+  <!-- Code highlighting -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css" />
 
-  <!-- KaTeX for math rendering -->
+  <!-- KaTeX for math -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
 
   <style>
-    /* ─── Root & Body ─────────────────────────────────────────── */
-    :root {
-      --accent:    #00d4ff;
-      --accent2:   #a855f7;
-      --bg-dark:   #0a0a1a;
-      --bg-card:   rgba(255,255,255,0.05);
-      --radius:    12px;
-    }
+    /* ── Reset & base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
 
     html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--bg-dark);
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      background: #0d0d1a;
       font-family: 'Segoe UI', system-ui, sans-serif;
     }
 
-    /* ─── Reveal container ────────────────────────────────────── */
+    /* ── Reveal container ───────────────────────────────────────── */
     .reveal {
-      font-size: 1.6vh;          /* responsive: scales with viewport height */
+      font-size: 22px; /* base — Reveal.js scale le tout automatiquement */
     }
 
-    /* ─── Slides: never overflow the viewport ─────────────────── */
-    .reveal .slides section {
-      box-sizing: border-box;
-      padding: 2vh 3vw;
-      height: 100%;
-      max-height: 100%;
-      overflow: hidden;          /* clip instead of scroll for presentation feel */
-      display: flex !important;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
+    /* ── Slides ─────────────────────────────────────────────────── */
+    .reveal .slides {
       text-align: left;
     }
 
-    /* Center-aligned title slides */
-    .reveal .slides section.center-slide {
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+    .reveal .slides section {
+      /* Laisse Reveal.js gérer le scaling — pas de height fixe */
+      padding: 20px 40px;
+      text-align: left;
     }
 
-    /* ─── Typography ──────────────────────────────────────────── */
+    /* ── Typography ─────────────────────────────────────────────── */
     .reveal h1 {
-      font-size: clamp(1.4rem, 3.5vh, 2.6rem);
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      font-size: 1.8em;
+      background: linear-gradient(135deg, #a78bfa, #60a5fa);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin: 0 0 1.5vh 0;
+      margin-bottom: 0.4em;
       line-height: 1.2;
     }
 
     .reveal h2 {
-      font-size: clamp(1.1rem, 2.8vh, 2rem);
-      color: var(--accent);
-      margin: 0 0 1.2vh 0;
-      border-bottom: 1px solid rgba(0,212,255,0.3);
-      padding-bottom: 0.5vh;
-      width: 100%;
+      font-size: 1.3em;
+      color: #a78bfa;
+      border-bottom: 2px solid rgba(167,139,250,0.3);
+      padding-bottom: 0.2em;
+      margin-bottom: 0.5em;
     }
 
     .reveal h3 {
-      font-size: clamp(0.95rem, 2.2vh, 1.5rem);
-      color: var(--accent2);
-      margin: 0.8vh 0 0.6vh 0;
+      font-size: 1.05em;
+      color: #60a5fa;
+      margin-bottom: 0.3em;
     }
 
     .reveal p {
-      font-size: clamp(0.8rem, 1.8vh, 1.1rem);
-      line-height: 1.55;
-      margin: 0.4vh 0;
-      color: #d0d0e0;
-    }
-
-    .reveal ul, .reveal ol {
-      font-size: clamp(0.78rem, 1.7vh, 1.05rem);
-      line-height: 1.5;
-      margin: 0.4vh 0 0.4vh 1.5em;
-      padding: 0;
-      color: #d0d0e0;
+      font-size: 0.85em;
+      line-height: 1.6;
+      color: #e2e8f0;
+      margin: 0.3em 0;
     }
 
     .reveal li {
-      margin-bottom: 0.35vh;
+      font-size: 0.82em;
+      line-height: 1.55;
+      color: #cbd5e1;
+      margin: 0.2em 0;
     }
 
-    /* ─── Code blocks ─────────────────────────────────────────── */
+    .reveal strong { color: #f0abfc; }
+    .reveal em     { color: #7dd3fc; font-style: italic; }
+
+    /* ── Code blocks ────────────────────────────────────────────── */
     .reveal pre {
       width: 100%;
-      max-height: 38vh;          /* never taller than 38% of viewport */
-      overflow-y: auto;
-      margin: 0.8vh 0;
-      border-radius: var(--radius);
-      border: 1px solid rgba(0,212,255,0.2);
+      margin: 0.4em 0;
+      border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      font-size: clamp(0.65rem, 1.4vh, 0.85rem);
-      box-sizing: border-box;
+      font-size: 0.72em;
+      /* Scrollable si vraiment trop long — dernier recours */
+      max-height: 45vh;
+      overflow-y: auto;
     }
 
-    .reveal pre code {
-      padding: 1.2vh 1.5vw !important;
-      line-height: 1.5;
-    }
-
-    .reveal code:not(pre code) {
-      background: rgba(0,212,255,0.12);
-      color: var(--accent);
-      padding: 0.1em 0.4em;
-      border-radius: 4px;
+    .reveal code {
+      font-family: 'Fira Code', 'Cascadia Code', monospace;
       font-size: 0.9em;
     }
 
-    /* ─── Math (KaTeX) ────────────────────────────────────────── */
+    /* Inline code */
+    .reveal p code, .reveal li code {
+      background: rgba(167,139,250,0.15);
+      border: 1px solid rgba(167,139,250,0.3);
+      border-radius: 4px;
+      padding: 0.1em 0.4em;
+      font-size: 0.85em;
+      color: #f0abfc;
+    }
+
+    /* ── Tables ─────────────────────────────────────────────────── */
+    .reveal table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75em;
+      margin: 0.5em 0;
+    }
+
+    .reveal table th {
+      background: rgba(167,139,250,0.2);
+      color: #a78bfa;
+      padding: 6px 12px;
+      border: 1px solid rgba(167,139,250,0.3);
+      text-align: left;
+    }
+
+    .reveal table td {
+      padding: 5px 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #cbd5e1;
+    }
+
+    .reveal table tr:nth-child(even) td {
+      background: rgba(255,255,255,0.03);
+    }
+
+    /* ── Blockquotes ────────────────────────────────────────────── */
+    .reveal blockquote {
+      background: rgba(96,165,250,0.08);
+      border-left: 4px solid #60a5fa;
+      border-radius: 0 8px 8px 0;
+      padding: 0.5em 1em;
+      margin: 0.5em 0;
+      font-size: 0.82em;
+      color: #93c5fd;
+      font-style: italic;
+    }
+
+    /* ── KaTeX math ─────────────────────────────────────────────── */
     .reveal .katex {
-      font-size: clamp(0.85rem, 1.8vh, 1.1rem) !important;
+      font-size: 0.95em;
+      color: #fde68a;
     }
 
     .reveal .katex-display {
-      margin: 0.6vh 0;
+      margin: 0.4em 0;
       overflow-x: auto;
       overflow-y: hidden;
     }
 
-    /* ─── Cards / info boxes ──────────────────────────────────── */
-    .reveal .card {
-      background: var(--bg-card);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: var(--radius);
-      padding: 1.2vh 1.5vw;
-      margin: 0.6vh 0;
-      width: 100%;
-      box-sizing: border-box;
-      backdrop-filter: blur(6px);
-    }
-
-    .reveal .card-accent {
-      border-left: 3px solid var(--accent);
-    }
-
-    .reveal .card-purple {
-      border-left: 3px solid var(--accent2);
-    }
-
-    .reveal .card-warning {
-      border-left: 3px solid #f59e0b;
-      background: rgba(245,158,11,0.08);
-    }
-
-    .reveal .card-success {
-      border-left: 3px solid #10b981;
-      background: rgba(16,185,129,0.08);
-    }
-
-    /* ─── Two-column layout ───────────────────────────────────── */
-    .reveal .cols {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5vw;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .reveal .cols-3 {
-      grid-template-columns: 1fr 1fr 1fr;
-    }
-
-    .reveal .cols-30-70 {
-      grid-template-columns: 30% 68%;
-    }
-
-    /* ─── Badges / tags ───────────────────────────────────────── */
-    .reveal .badge {
-      display: inline-block;
-      padding: 0.2em 0.7em;
-      border-radius: 20px;
-      font-size: clamp(0.6rem, 1.3vh, 0.8rem);
-      font-weight: 600;
-      margin: 0.2em;
-    }
-
-    .reveal .badge-blue  { background: rgba(0,212,255,0.2);  color: var(--accent);  border: 1px solid var(--accent); }
-    .reveal .badge-purple{ background: rgba(168,85,247,0.2); color: var(--accent2); border: 1px solid var(--accent2); }
-    .reveal .badge-green { background: rgba(16,185,129,0.2); color: #10b981;        border: 1px solid #10b981; }
-    .reveal .badge-orange{ background: rgba(245,158,11,0.2); color: #f59e0b;        border: 1px solid #f59e0b; }
-
-    /* ─── Tables ──────────────────────────────────────────────── */
-    .reveal table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: clamp(0.7rem, 1.5vh, 0.9rem);
-      margin: 0.6vh 0;
-    }
-
-    .reveal table th {
-      background: rgba(0,212,255,0.15);
-      color: var(--accent);
-      padding: 0.6vh 1vw;
-      text-align: left;
-      border-bottom: 1px solid rgba(0,212,255,0.3);
-    }
-
-    .reveal table td {
-      padding: 0.5vh 1vw;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      color: #d0d0e0;
-    }
-
-    .reveal table tr:hover td {
-      background: rgba(255,255,255,0.04);
-    }
-
-    /* ─── Progress bar ────────────────────────────────────────── */
+    /* ── Progress bar ───────────────────────────────────────────── */
     .reveal .progress {
-      color: var(--accent);
-      height: 3px;
+      background: rgba(167,139,250,0.2);
+      height: 4px;
     }
 
-    /* ─── Slide number ────────────────────────────────────────── */
+    .reveal .progress span {
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+    }
+
+    /* ── Slide number ───────────────────────────────────────────── */
     .reveal .slide-number {
-      background: rgba(0,0,0,0.5);
-      color: var(--accent);
-      font-size: 1.2vh;
+      background: rgba(13,13,26,0.8);
+      color: #a78bfa;
+      font-size: 0.7em;
       border-radius: 4px;
-      padding: 2px 6px;
+      padding: 2px 8px;
     }
 
-    /* ─── Back button ─────────────────────────────────────────── */
+    /* ── Navigation arrows ──────────────────────────────────────── */
+    .reveal .controls {
+      color: #a78bfa;
+    }
+
+    /* ── Back to syllabus button ────────────────────────────────── */
     #back-btn {
       position: fixed;
       top: 14px;
       left: 14px;
       z-index: 9999;
-      background: rgba(0,212,255,0.15);
-      border: 1px solid var(--accent);
-      color: var(--accent);
+      background: rgba(167,139,250,0.15);
+      border: 1px solid rgba(167,139,250,0.4);
+      color: #a78bfa;
       padding: 6px 14px;
       border-radius: 20px;
-      font-size: 0.8rem;
+      font-size: 13px;
       cursor: pointer;
       text-decoration: none;
-      backdrop-filter: blur(6px);
-      transition: background 0.2s;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+      font-family: 'Segoe UI', system-ui, sans-serif;
     }
 
     #back-btn:hover {
-      background: rgba(0,212,255,0.3);
+      background: rgba(167,139,250,0.3);
+      color: #fff;
     }
 
-    /* ─── Scrollbar styling for code blocks ───────────────────── */
-    .reveal pre::-webkit-scrollbar { height: 4px; width: 4px; }
-    .reveal pre::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
-    .reveal pre::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
-
-    /* ─── Blockquote ──────────────────────────────────────────── */
-    .reveal blockquote {
-      background: rgba(168,85,247,0.1);
-      border-left: 3px solid var(--accent2);
-      border-radius: 0 var(--radius) var(--radius) 0;
-      padding: 0.8vh 1.2vw;
-      margin: 0.6vh 0;
-      font-style: italic;
-      color: #c0b0e0;
-      width: 100%;
-      box-sizing: border-box;
+    /* ── Loading overlay ────────────────────────────────────────── */
+    #loading {
+      position: fixed;
+      inset: 0;
+      background: #0d0d1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      gap: 16px;
     }
 
-    /* ─── Emoji icons in headings ─────────────────────────────── */
-    .reveal h2 .icon, .reveal h3 .icon {
-      -webkit-text-fill-color: initial;
-      background: none;
-      margin-right: 0.3em;
+    #loading .spinner {
+      width: 48px; height: 48px;
+      border: 4px solid rgba(167,139,250,0.2);
+      border-top-color: #a78bfa;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
     }
 
-    /* ─── Highlight spans ─────────────────────────────────────── */
-    .reveal .hl-blue   { color: var(--accent);  font-weight: 600; }
-    .reveal .hl-purple { color: var(--accent2); font-weight: 600; }
-    .reveal .hl-green  { color: #10b981;        font-weight: 600; }
-    .reveal .hl-orange { color: #f59e0b;        font-weight: 600; }
+    #loading p {
+      color: #a78bfa;
+      font-size: 14px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
 
-    /* ─── Fragment animations ─────────────────────────────────── */
-    .reveal .fragment.fade-up {
-      transform: translateY(15px);
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
-
 <body>
 
-  <!-- Back to syllabus button -->
-  <a id="back-btn" href="syllabus.html">← Course Map</a>
+  <!-- Loading overlay -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p>Loading slides…</p>
+  </div>
 
+  <!-- Back to syllabus -->
+  <a id="back-btn" href="syllabus.html">← Syllabus</a>
+
+  <!-- Reveal.js wrapper -->
   <div class="reveal">
     <div class="slides">
-      <!-- Markdown content loaded dynamically via ?src= URL param -->
-      <section
-        data-markdown
-        data-separator="^\n---\n"
-        data-separator-vertical="^\n--\n"
-        data-separator-notes="^Note:"
-      >
-        <textarea data-template id="md-content">
-          <!-- Content injected by JS below -->
-        </textarea>
+      <!-- Markdown content injected here -->
+      <section data-markdown id="md-section">
+        <textarea data-template id="md-content"></textarea>
       </section>
     </div>
   </div>
@@ -332,76 +268,85 @@
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/markdown/markdown.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
 
   <!-- KaTeX -->
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 
   <script>
-    /**
-     * Reads ?src=path/to/file.md from the URL,
-     * fetches the Markdown file, injects it into the
-     * Reveal.js textarea, then initialises the presentation.
-     */
-    (async () => {
-      const params  = new URLSearchParams(window.location.search);
-      const srcPath = params.get('src');
+    // ── Auth guard ───────────────────────────────────────────────
+    if (sessionStorage.getItem('dl_auth') !== '1') {
+      window.location.href = 'index.html';
+    }
 
-      if (!srcPath) {
-          /*
-          document.getElementById('md-content').textContent ='# ⚠️ No source file\n\nAdd `?src=path/to/file.md` to the URL.';
-          */
-          window.location.href = 'syllabus.html';
-      } else {
-        try {
-          const res  = await fetch(srcPath);
+    // ── Parse ?src= param ────────────────────────────────────────
+    const params  = new URLSearchParams(window.location.search);
+    const srcPath = params.get('src');
+
+    if (!srcPath) {
+      window.location.href = 'syllabus.html';
+    } else {
+      fetch(srcPath)
+        .then(res => {
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const text = await res.text();
-          document.getElementById('md-content').textContent = text;
+          return res.text();
+        })
+        .then(md => {
+          document.getElementById('md-content').textContent = md;
 
-          // Update page title from first H1 found
-          const match = text.match(/^#\s+(.+)/m);
-          if (match) document.title = match[1] + ' — Deep Learning M2';
-        } catch (err) {
+          // ── Initialize Reveal.js ─────────────────────────────
+          Reveal.initialize({
+            // ── Dimensions : Reveal.js scale automatiquement
+            // tout le contenu pour tenir dans la fenêtre
+            width: 1100,
+            height: 850,
+            margin: 0.06,
+            minScale: 0.1,   // autorise un zoom-out agressif si besoin
+            maxScale: 2.0,
+
+            // ── Comportement
+            center: false,         // contenu aligné en haut, pas centré
+            hash: true,            // URL #/slide pour partager
+            slideNumber: 'c/t',    // numéro courant / total
+            progress: true,
+            controls: true,
+            controlsTutorial: false,
+            transition: 'slide',
+            transitionSpeed: 'fast',
+
+            // ── Plugins
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+
+            // ── Markdown config
+            markdown: {
+              smartypants: true,
+            },
+          }).then(() => {
+            // ── KaTeX rendering après que Reveal a parsé le MD
+            renderMathInElement(document.querySelector('.reveal'), {
+              delimiters: [
+                { left: '$$', right: '$$', display: true  },
+                { left: '$',  right: '$',  display: false },
+              ],
+              throwOnError: false,
+            });
+
+            // ── Hide loading overlay
+            document.getElementById('loading').style.display = 'none';
+          });
+        })
+        .catch(err => {
           document.getElementById('md-content').textContent =
-            `# ⚠️ Could not load \`${srcPath}\`\n\n\`\`\`\n${err.message}\n\`\`\``;
-        }
-      }
+            `# ❌ Error loading file\n\n\`${srcPath}\`\n\n${err.message}`;
 
-      // Initialise Reveal.js AFTER content is injected
-      Reveal.initialize({
-        hash:           true,
-        slideNumber:    'c/t',
-        progress:       true,
-        center:         false,       // we handle alignment per-slide via CSS
-        transition:     'slide',
-        transitionSpeed:'fast',
-
-        // Fit content to slide — key setting to prevent overflow
-        width:          '100%',
-        height:         '100%',
-        margin:         0.04,
-        minScale:       0.2,
-        maxScale:       2.0,
-
-        // Math via KaTeX
-        math: {
-          renderer: 'KaTeX',
-          delimiters: [
-            { left: '$$', right: '$$', display: true  },
-            { left: '$',  right: '$',  display: false },
-          ],
-        },
-
-        plugins: [
-          RevealMarkdown,
-          RevealHighlight,
-          RevealNotes,
-          RevealMath,
-        ],
-      });
-    })();
+          Reveal.initialize({
+            width: 1100, height: 850,
+            plugins: [RevealMarkdown],
+          }).then(() => {
+            document.getElementById('loading').style.display = 'none';
+          });
+        });
+    }
   </script>
-
 </body>
 </html>
